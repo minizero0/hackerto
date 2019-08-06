@@ -3,4 +3,22 @@
 
 {% block content %}
 일반 회원이 봉사활동을 등록하는 페이지
+{% if user.is_authenticated %}
+<h1>{{ user.id }}</h1><br>
+{% endif %}
+일반 회원 마이 페이지
+<a href= 'mypage'>나의현황 보러가기:</a>
+{% for Service in service.all %}
+    {% if user.level >= Service.level  %}
+        <p>{{ Service.name }} </p>
+        <p>{{ Service.level }}레벨 이상</p>
+        <P>보상 {{ Service.point }} 포인트</P>
+        <p>기관명:{{ Service.organ.organ.crew }}</p>
+        <p>제한인원: {{ Service.number }}</p>
+        <form method = "POST" action= "{%url 'quest_update' Service.id user.id  %}">
+        {% csrf_token %}
+        <button><input type="submit" value="신청하기"></button>
+        </form>
+    {% endif %}
+{% endfor %}
 {% endblock %}

@@ -70,17 +70,6 @@ def mypage(request):
     organs = Organ.objects.all()
     return render(request, 'mypage.html',{'users': users, 'service': service, 'organs': organs })
 
-def mypage_update(request, service_id, user_id):
-    service = get_object_or_404(Service, id=service_id)
-    user = get_object_or_404(User, id=user_id)
-    if request.method == "POST":
-        if user.level >= service.level:
-            user.save()
-            return render(request, 'thanks2.html', {'username':user.name, 'service_name':service.name})
-        else:
-            return render(request, 'thanks2.html', {'errormessage': "level이 낮습니다."})
-    else:
-        return render(request, 'thanks2.html',{'errormessage': "비정상적인 접근입니다."})
     
 #상황 설명 페이지 
 def mypage2(request):
@@ -100,8 +89,29 @@ def register(request):
 
 # 봉사활동을 선택할 수 있는 페이지
 def quest(request):
-    return render(request, 'quest.html')
+    users = User.objects.all()
+    service = Service.objects.all
+    organs = Organ.objects.all()
+    return render(request, 'quest.html', {'users': users, 'service': service, 'organs': organs })
 
+#봉사활동 서택 후 업데이트
+def quest_update(request, service_id, user_id):
+    service = get_object_or_404(Service, id=service_id)
+    user = get_object_or_404(User, id=user_id)
+    if request.method == "POST":
+        if service.number > 0:
+            if user.level >= service.level:
+                user = User.objects.get(pk=user_id)
+                service.user.add(user)
+                service.number = service.number -1
+                service.save()
+                return render(request, 'thanks2.html', {'username':user.name, 'service_name':service.name})
+            else:
+                return render(request, 'thanks2.html', {'errormessage': "level이 낮습니다."})
+        else:
+            return render(request, 'thanks2.html', {'errormessage': "인원이 마감되었습니다."})
+    else:
+        return render(request, 'thanks2.html',{'errormessage': "비정상적인 접근입니다."})
 # 회원이 포인트를 사용할 수 있는 페이지
 def point(request):
     brands = Brand.objects.all()

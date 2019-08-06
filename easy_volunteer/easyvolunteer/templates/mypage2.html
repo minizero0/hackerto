@@ -1,9 +1,0 @@
-{% extends 'layout.html' %}
-{% load staticfiles%}
-
-{% block content %}
-{% if user.is_authenticated %}
-{{ user.id }}<br>
-{% endif %}
-{{ service.all }}
-{% endblock %}
